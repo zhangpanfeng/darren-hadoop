@@ -35,7 +35,6 @@ public class TransferParam {
 
         long start = System.currentTimeMillis();
         Configuration conf = new Configuration();
-
         // 传递参数方式一 ：简单字符串
         conf.set("key1", "value1");
 
@@ -56,7 +55,6 @@ public class TransferParam {
         DefaultStringifier.storeArray(conf, list.toArray(), "key3");
 
         // 传递参数方式四 ： 复杂Map
-
         MapWritable map = new MapWritable();
         map.put(new Text("param"), param);
         map.put(new Text("param1"), param1);
@@ -85,7 +83,7 @@ public class TransferParam {
         DistributedCache.addCacheFile(new Path(args[0]).toUri(), conf);
 
         Job job = new Job(conf);
-        conf.set("key6", "test6");
+        conf.set("key7", "test7");
         job.setJarByClass(WordCount.class);
         job.setJobName("TransferParam");
 
@@ -103,12 +101,13 @@ public class TransferParam {
 
         // delete the output path
         HDFSUtil.deleteHDFSFile(conf, args[1]);
+        LOG.info("Close Time ======1============== " + System.currentTimeMillis());
 
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
         job.waitForCompletion(true);
-        conf.set("key7", "test7");
+        conf.set("key8", "test8");
         long end = System.currentTimeMillis();
         double s = (end - start) / 1000.0;
         double m = s / 60.0;

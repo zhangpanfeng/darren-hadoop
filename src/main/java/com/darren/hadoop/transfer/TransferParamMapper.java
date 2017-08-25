@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.net.URI;
 import java.net.URLDecoder;
@@ -12,6 +13,7 @@ import java.util.Set;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.filecache.DistributedCache;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.DefaultStringifier;
 import org.apache.hadoop.io.IntWritable;
@@ -24,7 +26,8 @@ import org.apache.log4j.Logger;
 
 public class TransferParamMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
     private static final Logger LOG = Logger.getLogger(TransferParamMapper.class);
-
+    private FileSystem fileSystem;
+    
     @Override
     protected void setup(Mapper<LongWritable, Text, Text, IntWritable>.Context context)
             throws IOException, InterruptedException {
@@ -54,7 +57,6 @@ public class TransferParamMapper extends Mapper<LongWritable, Text, Text, IntWri
 
         // 获取参数方式五： 获取复杂对象
         String value5 = conf.get("key5");
-        LOG.info("第五个参数： " + value5);
         ObjectInputStream objIn = new ObjectInputStream(new ByteArrayInputStream(URLDecoder.decode(value5, "UTF-8").getBytes("ISO-8859-1")));
         ComplexParameter complexParameter = null;
         try {
@@ -64,17 +66,11 @@ public class TransferParamMapper extends Mapper<LongWritable, Text, Text, IntWri
         }
         LOG.info("第五个参数： " + complexParameter);
         
-        LOG.info("第六个参数： " + conf.get("key6"));
-        
-        LOG.info("第七个参数： " + conf.get("key7"));
-        
-        
         // 获取参数方式六： 获取文件
-        URI[] urls = DistributedCache.getCacheFiles(conf);
+        
         Path[] paths = DistributedCache.getLocalCacheFiles(conf);
-        LOG.info("第六个参数： " + urls[0]);
         LOG.info("第六个参数： " + paths[0]);
-        LOG.info("path================= ");
+        LOG.info("path=================本地文件系统 ");
         for (Path path : paths) {
             BufferedReader reader = new BufferedReader(new FileReader(path.toString()));
             String line = null;
@@ -83,16 +79,25 @@ public class TransferParamMapper extends Mapper<LongWritable, Text, Text, IntWri
             }
             reader.close();
         }
-//        LOG.info("uri================= ");
-//        for (URI uri : urls) {
-//            BufferedReader reader = new BufferedReader(new FileReader(uri.toString()));
-//            String line = null;
-//            while((line = reader.readLine()) != null){
-//                LOG.info("第六个参数： " + line);
-//            }
-//            reader.close();
-//        }
         
+        URI[] urls = DistributedCache.getCacheFiles(conf);
+        LOG.info("第六个参数： " + urls[0]);
+        LOG.info("uri=================HDFS文件系统 ");
+        //fileSystem = FileSystem.get(conf);
+        fileSystem = FileSystem.newInstance(conf);
+        for (URI uri : urls) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fileSystem.open(new Path(uri.toString()))));
+            String line = null;
+            while((line = reader.readLine()) != null){
+                LOG.info("第六个参数： " + line);
+            }
+            reader.close();
+        }
+        
+        
+        LOG.info("第七个参数： " + conf.get("key7"));
+        
+        LOG.info("第八个参数： " + conf.get("key8"));
     }
 
     @Override
@@ -103,4 +108,14 @@ public class TransferParamMapper extends Mapper<LongWritable, Text, Text, IntWri
         context.getConfiguration().set("key", value.toString());
     }
 
+    @Override
+    protected void cleanup(Mapper<LongWritable, Text, Text, IntWritable>.Context context)
+            throws IOException, InterruptedException {
+        super.cleanup(context);
+        try{
+            fileSystem.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
 }
