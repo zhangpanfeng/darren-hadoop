@@ -13,8 +13,8 @@ import org.apache.log4j.Logger;
 
 import com.darren.hadoop.util.HDFSUtil;
 
-public class WordCount {
-    private static final Logger LOG = Logger.getLogger(WordCount.class);
+public class GroupWordCount {
+    private static final Logger LOG = Logger.getLogger(GroupWordCount.class);
 
     public static void main(String[] args) throws Exception {
         LOG.info("Input path: " + args[0]);
@@ -23,20 +23,24 @@ public class WordCount {
         long start = System.currentTimeMillis();
         Configuration conf = new Configuration();
         Job job = new Job(conf);
-        job.setJarByClass(WordCount.class);
+        job.setJarByClass(GroupWordCount.class);
         job.setJobName("wordcound");
 
+        job.setGroupingComparatorClass(MyGroupComparator.class);
+        
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
 
-        job.setMapperClass(WordCoundMapper.class);
-        job.setReducerClass(WordCoundReducer.class);
+        job.setMapperClass(GroupWordCoundMapper.class);
+        job.setReducerClass(GroupWordCoundReducer.class);
 
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
         
         //set reduce number
         job.setNumReduceTasks(1);
+        
+        
         
         //delete the output path
         HDFSUtil.deleteHDFSFile(conf, args[1]);

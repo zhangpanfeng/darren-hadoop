@@ -1,4 +1,4 @@
-package com.darren.hadoop.wordcount;
+package com.darren.hadoop.wordcount.jython;
 
 import java.io.IOException;
 

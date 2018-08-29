@@ -1,4 +1,4 @@
-package com.darren.hadoop.wordcount;
+package com.darren.hadoop.wordcount.jython;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;

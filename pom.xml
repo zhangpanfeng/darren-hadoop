@@ -21,52 +21,40 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
+        <!-- <dependency> <groupId>org.apache.hadoop</groupId> <artifactId>hadoop-core</artifactId> <version>2.6.0-mr1-cdh5.4.3</version> 
+            </dependency> <dependency> <groupId>org.apache.hadoop</groupId> <artifactId>hadoop-common</artifactId> 
+            <version>2.6.0-cdh5.4.3</version> </dependency> -->
+        <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-client -->
         <dependency>
             <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-core</artifactId>
-            <version>2.6.0-mr1-cdh5.4.3</version>
+            <artifactId>hadoop-client</artifactId>
+            <version>2.6.5</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-common</artifactId>
-            <version>2.6.0-cdh5.4.3</version>
+            <groupId>org.python</groupId>
+            <artifactId>jython</artifactId>
+            <version>2.7.0</version>
         </dependency>
     </dependencies>
 
-    <repositories>
-        <repository>
-            <id>cloudera</id>
-            <url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
-        </repository>
-    </repositories>
-    
+    <!-- <repositories> <repository> <id>cloudera</id> <url>https://repository.cloudera.com/artifactory/cloudera-repos/</url> 
+        </repository> </repositories> -->
+
     <build>
         <finalName>darren-hadoop</finalName>
-        <!-- <plugins>
+        <!-- <plugins> <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-jar-plugin</artifactId> 
+            <version>2.4</version> <configuration> <archive> <manifest> <addClasspath>true</addClasspath> <mainClass>com.darren.test.wordcount.WordCount</mainClass> 
+            </manifest> </archive> </configuration> </plugin> </plugins> -->
+
+        <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
+                <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>com.darren.test.wordcount.WordCount</mainClass>
-                        </manifest>
-                    </archive>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
-        </plugins> -->
-        
-       <plugins>  
-        <plugin>  
-            <groupId>org.apache.maven.plugins</groupId>  
-            <artifactId>maven-compiler-plugin</artifactId>  
-            <configuration>  
-                <source>1.7</source>  
-                <target>1.7</target>  
-            </configuration>  
-        </plugin>  
-    </plugins>
+        </plugins>
     </build>
 </project>
