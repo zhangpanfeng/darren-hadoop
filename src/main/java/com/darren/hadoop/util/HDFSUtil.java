@@ -77,7 +77,6 @@ public class HDFSUtil {
             fileSystem.delete(path, true);
             LOG.info("HDFS deleted: " + path);
         }
-        fileSystem.close();
     }
 
     /**
